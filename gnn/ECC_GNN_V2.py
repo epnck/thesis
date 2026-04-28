@@ -1,0 +1,43 @@
+import torch.nn as nn
+from torch_geometric.nn import NNConv,  GraphNorm
+
+class MCC_GNN (nn.Module):
+
+    def __init__(self, edge_dimension, node_dimension, hidden_dimension):
+        super(MCC_GNN, self).__init__()
+
+
+       #pass 1 of ecc
+        edge_weights1 = nn.Sequential(
+            nn.Linear(edge_dimension, hidden_dimension),
+            nn.ReLU(),
+            nn.Linear(hidden_dimension, node_dimension * hidden_dimension) #shape in_channels * out_channels needed for nnconv
+
+        )
+        #ecc, output is of dimension hidden dimensits
+        self.ECC1 = NNConv(node_dimension, hidden_dimension, edge_weights1, aggr= 'mean') #aggr mean to prevnt hubs from dominating
+
+        #graph norm pass 1
+        self.graphnorm1 = GraphNorm(hidden_dimension)
+
+
+        #pass 2 of ecc
+        edge_weights2 = nn.Sequential(
+            nn.Linear(hidden_dimension , hidden_dimension), #in channels is output from pass 1, so hidden dim
+            nn.ReLU(),
+            nn.Linear(hidden_dimension, hidden_dimension * hidden_dimension)
+
+        )
+        #ecc
+        self.ECC2 = NNConv(hidden_dimension, hidden_dimension, edge_weights2,
+                           aggr='mean')
+        # graph norm pass 2
+        self.graphnorm2 = GraphNorm(hidden_dimension)
+
+
+        #fully connected layer
+        self.fcl1 = nn.Linear(hidden_dimension, hidden_dimension //2)
+        self.fcl2 =nn.Linear(hidden_dimension // 2 ,1)
+
+
+

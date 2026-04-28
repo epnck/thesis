@@ -1,5 +1,6 @@
 import torch.nn as nn
-from torch_geometric.nn import NNConv,  GraphNorm
+from torch_geometric.nn import NNConv,  GraphNorm, global_mean_pool
+import torch.nn.functional as F
 
 class MCC_GNN (nn.Module):
 
@@ -40,4 +41,36 @@ class MCC_GNN (nn.Module):
         self.fcl2 =nn.Linear(hidden_dimension // 2 ,1)
 
 
+    def forward(self, data):
 
+        node_features = data.node_features #popullation, area , position
+        edge_index =  data.edge_index
+        flow = data.flow #mobility flow
+
+        batch = data.batch
+
+         #pass 1
+        x = self.ECC1(node_features, edge_index, flow)
+        x = F.relu(x) #order from paper
+        x = self.graphnorm1(x)
+
+        #pass 2
+        x = self.ECC2(x, edge_index, flow)
+        x = F.relu(x)
+        x = self.graphnorm2(x)
+
+        #relu here,  cite paper
+        x = F.relu(x)
+         #create graph embeddings
+        embedding = global_mean_pool(x, batch)
+
+        #prediciton head
+        f_out = self.fcl1(embedding)
+        f_out = F.relu(f_out)
+        predicion = self.fcl2(f_out)
+
+
+
+
+
+        return predicion

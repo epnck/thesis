@@ -43,9 +43,9 @@ class MCC_GNN (nn.Module):
 
     def forward(self, data):
 
-        node_features = data.node_features #popullation, area , position
+        node_features = data.x #popullation, area , position
         edge_index =  data.edge_index
-        flow = data.flow #mobility flow
+        flow = data.edge_attr #mobility flow
 
         batch = data.batch
 

@@ -24,14 +24,14 @@ class MCC_GNN (nn.Module):
 
         #pass 2 of ecc
         edge_weights2 = nn.Sequential(
-            nn.Linear(hidden_dimension , hidden_dimension), #in channels is output from pass 1, so hidden dim
+            nn.Linear(edge_dimension , hidden_dimension),
             nn.ReLU(),
             nn.Linear(hidden_dimension, hidden_dimension * hidden_dimension)
 
         )
         #ecc
         self.ECC2 = NNConv(hidden_dimension, hidden_dimension, edge_weights2,
-                           aggr='mean')
+                           aggr='mean') #in channels is output from pass 1, so hidden dim
         # graph norm pass 2
         self.graphnorm2 = GraphNorm(hidden_dimension)
 

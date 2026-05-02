@@ -39,17 +39,17 @@ class MCC_GNN (nn.Module):
 
 
         # pass 3
-        edge_weights3 = nn.Sequential(
-            nn.Linear(edge_dimension, hidden_dimension),
-            nn.ReLU(),
-            nn.Linear(hidden_dimension, hidden_dimension * hidden_dimension)
-
-        )
-
-        self.ECC3 = NNConv(hidden_dimension, hidden_dimension, edge_weights3,
-                           aggr='mean')  # in channels is output from pass 2, so hidden dim
-        # graph norm pass 3
-        self.graphnorm3 = GraphNorm(hidden_dimension)
+        # edge_weights3 = nn.Sequential(
+        #     nn.Linear(edge_dimension, hidden_dimension),
+        #     nn.ReLU(),
+        #     nn.Linear(hidden_dimension, hidden_dimension * hidden_dimension)
+        #
+        # )
+        #
+        # self.ECC3 = NNConv(hidden_dimension, hidden_dimension, edge_weights3,
+        #                    aggr='mean')  # in channels is output from pass 2, so hidden dim
+        # # graph norm pass 3
+        # self.graphnorm3 = GraphNorm(hidden_dimension)
 
 
         #fully connected layer
@@ -68,21 +68,23 @@ class MCC_GNN (nn.Module):
          #pass 1
         x = self.ECC1(node_features, edge_index, flow)
          #order from paper
-        x = self.graphnorm1(x)
         x = F.relu(x)
+        x = self.graphnorm1(x)
+
 
         #pass 2
         x = self.ECC2(x, edge_index, flow)
+        x = F.relu(x)
         x = self.graphnorm2(x)
-        x = F.relu(x)
 
-        # pass 3
-        x = self.ECC3(x, edge_index, flow)
-        x = self.graphnorm3(x)
-        x = F.relu(x)
+
+        # # pass 3
+        # x = self.ECC3(x, edge_index, flow)
+        # x = self.graphnorm3(x)
+        # x = F.relu(x)
 
         #relu here,  cite paper
-        #x = F.relu(x)
+        x = F.relu(x)
          #create graph embeddings
         embedding = global_mean_pool(x, batch)
 

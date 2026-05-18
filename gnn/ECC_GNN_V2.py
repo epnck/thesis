@@ -68,14 +68,15 @@ class MCC_GNN (nn.Module):
          #pass 1
         x = self.ECC1(node_features, edge_index, flow)
          #order from paper
-        x = F.relu(x)
+
         x = self.graphnorm1(x)
+        x = F.relu(x)
 
 
         #pass 2
         x = self.ECC2(x, edge_index, flow)
-        x = F.relu(x)
         x = self.graphnorm2(x)
+        x = F.relu(x)
 
 
         # # pass 3
@@ -84,7 +85,7 @@ class MCC_GNN (nn.Module):
         # x = F.relu(x)
 
         #relu here,  cite paper
-        x = F.relu(x)
+
          #create graph embeddings
         embedding = global_mean_pool(x, batch)
 

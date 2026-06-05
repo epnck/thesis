@@ -10,7 +10,7 @@ This repository contains the codebase for generating synthetic mobility networks
 │   ├── covid_timeline_processing.py # Processes Georgia COVID-19 timeline & case data
 │   └── data_processing.py           # General demographic and empirical data parsing
 ├── datasets/
-│   ├── empirical/                  # Raw/processed London, Georgia, and Japan networks
+│   ├── empirical/                  # Raw London, Georgia, and Japan networks, can be found only too large to upload
 │   └── sparsity_levels/            # Graphs configured for different data sparsity regimes
 ├── gnn_training.py                 # Core script to train the proposed GNN and baselines
 └── README.md

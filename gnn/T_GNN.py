@@ -26,8 +26,6 @@ class T_GNN (nn.Module):
         # flow = data.edge_attr #mobility flow
 
         batch = data.batch
-
-
         # f_in from T-GNN
         x = self.linear1(node_features)
         x = F.relu(x)
@@ -35,7 +33,6 @@ class T_GNN (nn.Module):
         #f_att from tgnn
         x = self.GATconv1(x, edge_index)
         x = F.relu(x)
-
         #f_norm from tgnn
         x = self.layernorm1(x)
 
